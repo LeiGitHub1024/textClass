@@ -19,12 +19,9 @@ def NBC(train,valid):
     uniqueWordCount = 0 #不重复词总数
     classCountMap = {} #每个类的总词数
     classRatioMap = {} #每个类的词数/词总数
-
-    print("3 2 1 Ready Go !")
-    print("Training 🚗")
+    print("3 2 1 Ready Go !\nTraining 🚗")
     for class1 in classes:
         classCountMap[class1] = 0
-   
     with open(train, encoding='utf-8') as f:
         for line in tqdm(f.readlines()):
             js = json.loads(line)
@@ -49,10 +46,9 @@ def NBC(train,valid):
         classRatioMap[class1] = classCountMap[class1] / wordTotal
     for _ in wordSet:
         uniqueWordCount += 1
-    # 在这里其实可以存贮中间结果 下次可以直接用，不用重复计算了
-    print('Validate 🚚')
+    
+    print('Validating 🚚')
     x1 = np.zeros((10,10),dtype=int) #矩阵用来记录正确率
-
     with open(valid,'r') as f:
         for line in tqdm(f.readlines()):
             posibility = {}
