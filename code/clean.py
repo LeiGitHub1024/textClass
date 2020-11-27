@@ -21,19 +21,15 @@ def MakeWordsSet(words_file):
 
 stopwords_file = './data/cn_stopwords.txt'
 stopwords_set = MakeWordsSet(stopwords_file)
-with open('data/baike_qa_train.json','r') as f: #这个文件有大约14万条
-    with open("data/11_cut.json", 'a') as ff: #这个是目标文件（训练集）
-        i = 0
+with open('data/baike_qa_train.json','r') as f: 
+    with open("svm_data.json", 'a') as ff: #这个是目标文件（训练集）
         for line in tqdm(f.readlines()):
-            i += 1
-            if i > 712227: #仅处理源数据的一半作为训练集
-                break
             train = {}
             js = json.loads(line)
             mainCategory = js['category'].split('-')[0].split('/')[0]
             if mainCategory in classes:
                 cleanString = re.sub(u"([^\u4e00-\u9fa5\u0030-\u0039\u0041-\u005a\u0061-\u007a])","",js['title']+js['desc']+js['answer'])
-                if len(cleanString) < 51: #清除字符串中的特殊字符、转义字符，并且删除过短的例子
+                if len(cleanString) < 50: #清除字符串中的特殊字符、转义字符，并且删除过短的例子
                     continue
                 train['mainCategory'] = mainCategory
                 seg_list = jieba.cut(cleanString)  # 结巴分词
@@ -46,31 +42,31 @@ with open('data/baike_qa_train.json','r') as f: #这个文件有大约14万条
                 train['content'] = content[1:]
                 str = json.dumps(train, ensure_ascii=False)
                 ff.write(str+'\n')
-with open('data/baike_qa_train.json','r') as f:
-    with open("data/22_cut.json", 'a') as ff:
-        i = 0
-        for line in tqdm(f.readlines()):
-            i += 1
-            if i < 712227:
-                continue
-            train = {}
-            js = json.loads(line)
-            mainCategory = js['category'].split('-')[0].split('/')[0]
-            if mainCategory in classes:
-                cleanString = re.sub(u"([^\u4e00-\u9fa5\u0030-\u0039\u0041-\u005a\u0061-\u007a])","",js['title']+js['desc']+js['answer'])
-                if len(cleanString) < 51:
-                    continue
-                train['mainCategory'] = mainCategory
-                seg_list = jieba.cut(cleanString)  # 默认是精确模式
-                content =''
-                for word in seg_list:
-                    if (word in stopwords_set) or ' ' in word or ',' in word  :
-                        continue
-                    else:
-                        content += ',' + word
-                train['content'] = content[1:]
-                str = json.dumps(train, ensure_ascii=False)
-                ff.write(str+'\n')
+# with open('data/baike_qa_train.json','r') as f:
+#     with open("data/valid_cut_2.json", 'a') as ff:
+#         i = 0
+#         for line in tqdm(f.readlines()):
+#             i += 1
+#             if i < 712227:
+#                 continue
+#             train = {}
+#             js = json.loads(line)
+#             mainCategory = js['category'].split('-')[0].split('/')[0]
+#             if mainCategory in classes:
+#                 cleanString = re.sub(u"([^\u4e00-\u9fa5\u0030-\u0039\u0041-\u005a\u0061-\u007a])","",js['title']+js['desc']+js['answer'])
+#                 if len(cleanString) < 100:
+#                     continue
+#                 train['mainCategory'] = mainCategory
+#                 seg_list = jieba.cut(cleanString)  # 默认是精确模式
+#                 content =''
+#                 for word in seg_list:
+#                     if (word in stopwords_set) or ' ' in word or ',' in word  :
+#                         continue
+#                     else:
+#                         content += ',' + word
+#                 train['content'] = content[1:]
+#                 str = json.dumps(train, ensure_ascii=False)
+#                 ff.write(str+'\n')
 
 
         
